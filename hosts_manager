@@ -4,6 +4,9 @@
 # Licensed under the terms of the GNU GPL v3 only
 #
 # Perform operations on /etc/hosts
+author="Dusan Mitrovic"
+author_email="dusan@dusanmitrovic.xyz"
+
 hosts_file="/etc/hosts"
 
 list_hosts() {
@@ -28,15 +31,28 @@ print_help() {
     echo "-a entry Append an entry to the hosts file"
     echo "-d lines Delete lines from the hosts file (comma separated)"
     echo "-l       List the hosts file"
+    echo "-v       Print versioning information"
     echo "-h       Print this help message"
 }
 
-while getopts "a:ld:h" option; 
+print_version() {
+    version="Hosts Manager v1.0.0"
+    copyright="Copyright (C) 2020 $author <$author_email>"
+    license="Licensed under the terms of the GNU GPL v3 only."
+
+    echo ""
+    echo $version
+    echo $copyright
+    echo $license
+}
+
+while getopts "a:ld:vh" option; 
 do
     case $option in
         a) append_line $OPTARG;;
         l) list_hosts;;
         d) delete_lines $OPTARG;;
+        v) print_version;;
         h) print_help;;
         \?) print_help;;
     esac
