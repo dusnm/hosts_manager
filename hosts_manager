@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Copyright (C) 2020 Dusan Mitrovic <dusan@dusanmitrovic.xyz>
+# Licensed under the terms of the GNU GPL v3 only
+#
+# Perform operations on /etc/hosts
+hosts_file="/etc/hosts"
+
+list_hosts() {
+    cat $hosts_file | nl -b a # Number all lines, not just the non-blank ones
+}
+
+append_line() {
+   line_to_append=$@
+   echo $line_to_append >> $hosts_file
+}
+
+delete_lines() {
+    unprocessed_input=$1
+    lines_to_delete=$(echo $unprocessed_input | sed "s/,/d\;/g;s/$/d/g")
+
+    sed -i "$lines_to_delete" $hosts_file
+}
+
+print_help() {
+    echo ""
+    echo "Usage: hosts_manager [-a \"127.0.0.1 example.com\"] | [-d 3,4,7] | [-l]"
+    echo "-a entry Append an entry to the hosts file"
+    echo "-d lines Delete lines from the hosts file (comma separated)"
+    echo "-l       List the hosts file"
+    echo "-h       Print this help message"
+}
+
+while getopts "a:ld:h" option; 
+do
+    case $option in
+        a) append_line $OPTARG;;
+        l) list_hosts;;
+        d) delete_lines $OPTARG;;
+        h) print_help;;
+        \?) print_help;;
+    esac
+done
